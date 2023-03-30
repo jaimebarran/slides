@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>NeSVoR</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="../css/quasar.min.css" />
+  <link rel="stylesheet" type="text/css" href="../css/pure-min.css" />
+  <link rel="stylesheet" type="text/css" href="../css/spaces.css" />
+  <link rel="stylesheet" type="text/css" href="../css/typo.css" />
+  <link rel="stylesheet" type="text/css" href="../css/devices.min.css" />
+  <link rel="stylesheet" type="text/css" href="../css/gh-fork-ribbon.css" />
+  <link rel="stylesheet" type="text/css" href="../css/nord-dark.css" />
+  <link rel="stylesheet" type="text/css" href="../css/nord-light.css" />
+  <link rel="stylesheet" type="text/css" href="../css/font-nord.css" />
+  <link rel="stylesheet" type="text/css" href="../css/bg-nord.css" />
+  <link rel="stylesheet" type="text/css" href="../css/font-open-color.css" />
+  <link rel="stylesheet" type="text/css" href="../css/bg-open-color.css" />
+  <link rel="stylesheet" type="text/css" href="../css/material-icons.css" />
+  <link rel="stylesheet" type="text/css" href="../css/abs-layout.css" />
+  <link rel="stylesheet" type="text/css" href="../css/border-layout.css" />
+  <link rel="stylesheet" type="text/css" href="../css/text-rect.css" />
+  <link rel="stylesheet" type="text/css" href="../css/text-circle.css" />
+  <link rel="stylesheet" type="text/css" href="../css/card.css" />
+  <link rel="stylesheet" type="text/css" href="../css/lines.css" />
+  <link rel="stylesheet" type="text/css" href="../css/filters.css" />
+  <link rel="stylesheet" type="text/css" href="../fonts/remixicon.css" />
+  <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<style>
+  .small {
+    font-size: 9pt;
+  }
+
+  .smallish {
+    font-size: 12pt;
+  }
+
+  .tiny {
+    font-size: 7pt;
+  }
+
+  .larger {
+    font-size: 20pt;
+  }
+
+  .large {
+    font-size: 24pt;
+  }
+
+  .footnote {
+    position: absolute;
+    bottom: 3em;
+    font-size: 0.7em;
+  }
+</style>
+
+<body>
+  <textarea id="source">
+
+    layout: true
+    class: typo, typo-selection
+
+    ---
+
+    count: false
+    class: center, middle
+
+    # An introduction to<br /> implicit neural representations
+    with a focus on NeSVoR<br /><br />
+
+    .smallish[DL Journal Club<br /><br />
+    
+    
+    Thomas Sanchez<br />
+    UNIL - CHUV - CIBM ]
+
+    ---
+    # What are implicit neural representations (INRs)?
+
+    * Modeling an image as a _continuous_ function of spatial coordinates.
+    * Self-supervised learning (1 trained model per image)
+    $$\begin{array}{ccc}
+    \text{Classical deep learning} &\;\;\;\;\;\;\;\;\;\;\;\;& \text{Implicit neural models} \\\\
+    \mathbf{f}\_{\theta}: \mathbf{x} \rightarrow \mathbf{y} && f_{\theta}:(x,y,z)\rightarrow (v,\sigma) \\\\
+    \mathbf{x}, \mathbf{y} \in \mathbb{R}^N && x,y,z,v, \sigma \in\mathbb{R}
+    \end{array}$$
+    <br />
+    .center[
+    <img src="img/inr2.png" width="70%" /><br />
+    ]
+
+    .footnote[Mildenhall et al. (2020). NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. *ECCV*]
+
+    ---
+
+    # A brief intro to Neural Radiance Fields (NeRFs)
+    Ingredients: 1. INR &emsp; 2.Physical model &emsp; 3. Loss
+
+    1 - $\text{NeRF} \subset \text{implicit neural models} \approx \text{coordinate-based models} $.
+    $$f_{\theta}:(x,y,z)\rightarrow (v,\sigma)\;\;\; x,y,z,v, \sigma \in\mathbb{R}$$
+
+    <p align="center" style="position: absolute; bottom: 2em; margin-left: -150px;">
+    <img src="img/inr_full.png" width="70%" /><br />
+    </p>
+    .footnote[Mildenhall et al. (2020)]
+
+    ???
+    - INR: 
+    - $\mathbf{r} = (x,y,z)$
+    - Important bit: there is a physical model telling us what we will observe on our training data.
+
+    ---
+
+    # A brief intro to Neural Radiance Fields (NeRFs)
+    Ingredients: 1. INR &emsp; 2.Physical model &emsp; 3. Loss
+
+    2 - Physical model.
+    $$V(\mathbf{r})=\int T(t) \sigma(\mathbf{r}(t)) v(\mathbf{r}(t), \mathbf{d}) dt\;\;\;\;\;\; \text{ } T(t)=\exp \left(-\int^t \sigma(\mathbf{r}(s)) d s\right)$$
+
+    <p align="center" style="position: absolute; bottom: 2em; margin-left: -150px;">
+    <img src="img/inr_full.png" width="70%" /><br />
+    </p>
+    .footnote[Mildenhall et al. (2020)]
+    ???
+    - INR: 
+    - $\mathbf{r} = (x,y,z)$
+    - Important bit: there is a physical model telling us what we will observe on our training data.
+
+    ---
+
+    # A brief intro to Neural Radiance Fields (NeRFs)
+    Ingredients: 1. INR &emsp; 2.Physical model &emsp; 3. Loss
+
+    3 - Loss. 
+    $$\mathcal{L}=\sum_{\mathbf{r} \in \mathcal{R}}\|\hat{V}(\mathbf{r})-V(\mathbf{r})\|_2^2$$
+
+    <p align="center" style="position: absolute; bottom: 2em; margin-left: -150px;">
+      <img src="img/inr_full.png" width="70%" /><br />
+    </p>
+    
+    .footnote[Mildenhall et al. (2020) ]
+    ???
+    - After discretization ...
+    - Self-supervised approach.
+    ---
+    # The results are impressive
+    * Synthetic, physics-rendered dataset.
+    <p align="center">
+      <img src="img/nerf1.png" width="100%" /><br />
+    </p>
+    
+    .footnote[Mildenhall et al. (2020) ]
+    ---
+
+    # The result is impressive
+    * Real-world data
+    <p align="center">
+      <img src="img/nerf2.png" width="100%" /><br />
+    </p>
+    
+    .footnote[Mildenhall et al. (2020) ]
+
+    ---
+
+    # What's the catch?
+    * Training a the vanilla NeRF is very slow!
+    <br />
+    <br />
+    <p align="center">
+      <img src="img/training_nerf.png" width="70%" /><br />
+    </p>
+    
+    .footnote[Mildenhall et al. (2020) ]
+    ---
+
+    .left-column[
+      ## What is it?
+    ]
+    .right-column[
+      A simple, in-browser, Markdown-driven slideshow tool targeted at people who know their way around HTML and CSS, featuring:
+
+    - Markdown formatting, with smart extensions
+
+    - Automatic syntax highlighting, with optional language hinting
+
+    - Slide scaling, thus similar appearance on all devices / resolutions .red[*]
+
+    - Touch support for smart phones and pads, i.e. swipe to navigate slides
+
+    .footnote[At least browsers are trying their best &emsp; test &emsp; test]
+    ]
+
+    ---
+
+    name: Introduction
+
+    # {{ name }}
+
+
+    The name of the slide is {{ name }}. The math is $\alpha+\beta$. 
+
+    Another inline formula is $\int_a^bf(x)dx$ \\(\int\\).
+
+    A formual block is here:
+
+    $$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
+
+    ---
+
+    # Shared title
+
+    .footnote[.red[*] Important footnote]
+
+
+    \(\int_a^bf(x)dx\)
+
+    --
+
+    1. Intro
+
+    --
+
+    2. Test
+
+    ```python
+
+    >>> import antigravity
+    ```    
+    
+    
+
+    ---
+    # References
+    - [TUM AI Lecture Series - Neural Fields Beyond Novel View Synthesis (Andrea Tagliasacchi)](https://www.youtube.com/watch?v=nRCOsBHt97E)
+    - Mildenhall, B., Srinivasan, P. P., Tancik, M., Barron, J. T., Ramamoorthi, R., & Ng, R. (2020, August). NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. In Computer Vision–ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part I (pp. 405-421).
+    - Müller, T., Evans, A., Schied, C., & Keller, A. (2022). Instant neural graphics primitives with a multiresolution hash encoding. ACM Transactions on Graphics (ToG), 41(4), 1-15.
+    - Xu, J., Moyer, D., Gagoski, B., Iglesias, J. E., Grant, P. E., Golland, P., & Adalsteinsson, E. (2023). NeSVoR: Implicit Neural Representation for Slice-to-Volume Reconstruction in MRI. IEEE Transactions on Medical Imaging.
+
+    </textarea>
+
+  <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var slideshow = remark.create({
+      highlightStyle: 'monokai',
+      highlightLanguage: 'remark',
+      highlightLines: true,
+      countIncrementalSlides: false,
+      highlightSpans: true,
+      ratio: '16:9'
+    });
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+</body>
+
+</html>
