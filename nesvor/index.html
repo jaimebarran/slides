@@ -153,7 +153,7 @@
     Ingredients: 1. INR &emsp; 2.Physical model &emsp; 3. Loss
 
     **2. Physical model.**
-    $$V(\mathbf{r})=\int T(t) \sigma(\mathbf{r}(t)) v(\mathbf{r}(t), \mathbf{d}) dt\;\;\;\;\;\; \text{ } T(t)=\exp \left(-\int^t \sigma(\mathbf{r}(s)) d s\right)$$
+    $$I(\mathbf{r}(t))=\int T(t) \sigma(\mathbf{r}(t)) v(\mathbf{r}(t), \mathbf{d}) dt\;\;\;\;\;\; \text{ } T(t)=\exp \left(-\int^t \sigma(\mathbf{r}(s)) d s\right)$$
 
     <p align="center" style="position: absolute; bottom: 2em; margin-left: -150px;">
     <img src="img/inr_full.png" width="70%" /><br />
@@ -170,7 +170,7 @@
     Ingredients: 1. INR &emsp; 2.Physical model &emsp; 3. Loss
 
     **3. Loss.**
-    $$\mathcal{L}=\sum_{\mathbf{r} \in \mathcal{R}}\|\hat{V}(\mathbf{r})-V(\mathbf{r})\|_2^2$$
+    $$\mathcal{L}=\sum_{\mathbf{r} \in \mathcal{R}}\|\hat{I}(\mathbf{r})-I(\mathbf{r})\|_2^2$$
 
     <p align="center" style="position: absolute; bottom: 2em; margin-left: -150px;">
       <img src="img/inr_full.png" width="70%" /><br />
@@ -202,7 +202,7 @@
     # An important detail
 
     Positional encodings help learning high frequency details.$^{*,\dagger}$
-    $$\gamma(p)=\left(\sin \left(2^{\circ} \pi p\right), \cos \left(2^{\circ} \pi p\right), \cdots, \sin \left(2^{L-1} \pi p\right), \cos \left(2^{L-1} \pi p\right)\right)$$
+    $$\gamma(p)=\left(\sin \left(2^{0} \pi p\right), \cos \left(2^{0} \pi p\right), \cdots, \sin \left(2^{L-1} \pi p\right), \cos \left(2^{L-1} \pi p\right)\right)$$
     
     <p align="center">
       <img src="img/fourier_features.png" width="60%" /><br />
@@ -250,9 +250,10 @@
     *The problem of motion and low SNR*
     
     - Fast acquisition
-      - Fast spin echo (FSE) sequences: 20-30 s ⇒ 1 slice in 1 s
-      - Thick slices (resolution around 1x1x3mm3)
-    - Orthogonal series (≥3) of 2D thick slices (3-5 mm)
+      - Fast spin echo (FSE) sequences: 20-30 s <br />
+      .smallish[⇒ 1 slice in 1 s]
+      - Thick slices  <br /> .smallish[resolution around $1\times 1 \times 3\text{mm}^3$]
+    - Orthogonal series ($\geq 3$) of 2D thick <br /> slices ($3-5 \text{mm}$)
     - Breath hold
     
     <p align="center">
@@ -299,18 +300,19 @@
       <img src="img/srr.png" width="100%" />
     </p>
 
+    .footnote[
+    M. Kuklisova-Murgasova et al. (2012). Reconstruction of fetal brain MRI with intensity matching and complete outlier removal. Medical image analysis <br />
+    S. Tourbier et al. (2019). Medical-image-analysis-laboratory/mialsuperresolutiontoolkit: MIAL super-resolution toolkit v1.0.0. Zenodo. <br />
+    M. Ebner et al. (2020). An automated framework for localization, segmentation and super-resolution reconstruction of fetal brain MRI. NeuroImage
+    ]
     ---
     # NeSVoR
 
-    **Why you should care about this paper** (and INRs in general)
+    **Why you should care about this paper**
 
     - NeSVoR greatly reduces the reconstruction time of fetal brain MRI
 
     - NeSVoR is very robust to bad quality input.
-
-    - INRs are fascinating
-
-    - INRs are a natural way to frame _many_ biomedical imaging problems. 
 
     
 
@@ -334,45 +336,13 @@
     </p>
 
     ---
-    class:split-15
-
     # NeSVoR in practice
+    The three ingredients of NeRF: 1. INR &emsp;&emsp; **2.Physical model** &emsp;&emsp; **3. Loss**
     
-    *How do you estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$, $\epsilon\_i(x)$? How do you retrieve $V(x)$?*
+    How do you estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$, $\epsilon\_i(x)$? How do you learn $V(x)$?
     
     $$I\_{i j}=C\_i \int\_{\Omega} M\_{i j}(x) B\_i(x)\left[V(x)+\epsilon\_i(x)\right] \mathrm{d} x$$
-    --
-    .column[
-      Solution:
-    ] 
-    .column[
-      
-    .smallish[1. Represent $V(x)$ as an INR;
-    2. Find a way to learn/estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$ and $\epsilon\_i(x)$;
-    3. Backpropagate.]
-    ]
-
-    <p align="center">
-      <img src="img/physical_model.png" width="70%" /><br />
-    </p>
-
-    ---
-    class: split-15
-
-    # NeSVoR in practice
-    
-    *How do you estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$, $\epsilon\_i(x)$? How do you retrieve $V(x)$?*
-    $$I\_{i j}=C\_i \int\_{\Omega} M\_{i j}(x) B\_i(x)\left[V(x)+\epsilon\_i(x)\right] \mathrm{d} x$$
-    
-    .column[
-    Solution:
-    ] 
-    .column[
-      
-    .smallish[1. Represent $V(x)$ as an INR;
-    2. Find a way to learn/estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$ and $\epsilon\_i(x)$;
-    3. Backpropagate.]
-    ]
+    <br />
     
     <p align="center">
       <img src="img/nesvor_inr_full.png" width="100%" /><br />
@@ -387,8 +357,9 @@
     - To learn it: need models and losses
 
     ---
-    # A deep dive into NeSVoR
-    Three main steps:
+    # Towards a trainable model
+    *How do you estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$, $\epsilon\_i(x)$? How do you learn $V(x)$?* <br />
+    $\Rightarrow$ Three main steps:
     1. Construct a discrete model
     2. Map the coordinates from the pixel space $p\_{ij}$ to the sampling space $x\_{ijk}$.
     $\Rightarrow$ Use SVoRT$^*$
@@ -398,8 +369,9 @@
       <img src="img/nesvor_inr.png" width="55.5%" /><br />
     </p>
     
+    .footnote[$^*$ J. Xu, et al. (2022) "SVoRT: Iterative transformer for slice-to-volume registration in fetal brain MRI." MICCAI.]
     ---
-    # A deep dive into NeSVoR
+    # Towards a trainable model
     **1. Construct a discrete model**
 
     Discretize the integral:
@@ -410,12 +382,17 @@
     $$\bar{I}\_{ij} = \mathbb{E}\left[I\_{i j}\right]\approx\frac{C\_i}{K} \sum\_{k=1}^K B\_i\left(x\_{i j k}\right) V\left(x\_{i j k}\right)$$
 
     $$\sigma\_{ij}^2 = \operatorname{var}\left(I\_{i j}\right) \approx\frac{C\_i^2}{K} \sum\_{k=1}^K M\_{i j}\left(x\_{i j k}\right) B\_i^2\left(x\_{i j k}\right) \sigma\_i^2\left(x\_{i j k}\right)$$
-
+    
+    
     ???
     - $I\_{ij}$ is a RV, because of the way we model the noise: compute the mean and the variance of the RV and approximate it with Monte-carlo sampling.
     - We secretly assume that $\epsilon\_i(x)$ is estimated: it is a Gaussian with unknown variance $\sigma_i$
+    - Model the PSF as a 3D anisotropic Gaussian:
+      - $M\_{i j}(x)=g\left(T\_i^{-1} \circ x-p\_{i j} ; \Sigma\right)$
+      - $g(u ; \Sigma)=\frac{1}{\sqrt{(2 \pi)^3 \operatorname{det}(\Sigma)}} \exp \left(-\frac{1}{2} u^T \Sigma^{-1} u\right)$
+
     ---
-    # A deep dive into NeSVoR
+    # Towards a trainable model
     **2. Map the coordinates from the pixel space $p\_{ij}$ to the sampling space $x\_{ijk}$**
     - Use SVoRT$^*$ to map all slices into a common space.
     - Incorporate the point-spread function (PSF) model in $M\_{ij}(x\_{ijk})$. 
@@ -431,7 +408,8 @@
 
     ---
      
-    # A deep dive into NeSVoR
+    # Towards a trainable model
+    
     **2. Find a way to learn/estimate $\color{red}C\_i$, $\color{blue} M\_{i j}(x)$, $\color{red} B\_i(x)$ and $\cancel{\epsilon\_i(x)}$ $\color{red} \sigma\_i^2(x)$**
 
     3 implicit networks
@@ -449,10 +427,9 @@
     - Bojanowski, Piotr, et al. "Optimizing the latent space of generative networks." arXiv preprint arXiv:1707.05776 (2017).
     ---
      
-    # A deep dive into NeSVoR
-    **2. Find a way to learn/estimate $\cancel{\color{red}C\_i}$, $\color{blue} M\_{i j}(x)$, $\color{blue} B\_i(x)$ and $\cancel{\epsilon\_i(x)}$ $\color{blue} \sigma\_i^2(x)$**
+    # Towards a trainable model
+    The three ingredients of NeRF: 1. INR &emsp;&emsp; 2.Physical model &emsp;&emsp; **3. Loss**
 
-    The last ingredient: **losses**
     $$\arg \min\_{\Theta} \mathcal{L}(\Theta), \quad \mathcal{L}=\mathcal{L}\_I+\lambda\_B \mathcal{R}\_B+\lambda\_V \mathcal{R}_V$$
     
     --
@@ -556,7 +533,7 @@
     The point of $\nu\_i$ is to downplay the role from an entire slice when it is of low quality.
     </textarea>
 
-  <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
+  <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
   <script type="text/javascript">
     var slideshow = remark.create({
       highlightStyle: 'monokai',
