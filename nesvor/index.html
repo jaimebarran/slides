@@ -362,14 +362,12 @@
     $\Rightarrow$ Three main steps:
     1. Construct a discrete model
     2. Map the coordinates from the pixel space $p\_{ij}$ to the sampling space $x\_{ijk}$.
-    $\Rightarrow$ Use SVoRT$^*$
     3. Find a way to learn/estimate $C\_i$, $M\_{i j}(x)$, $B\_i(x)$ and $\epsilon\_i(x)$.
 
     <p align="center">
       <img src="img/nesvor_inr.png" width="55.5%" /><br />
     </p>
     
-    .footnote[$^*$ J. Xu, et al. (2022) "SVoRT: Iterative transformer for slice-to-volume registration in fetal brain MRI." MICCAI.]
     ---
     # Towards a trainable model
     **1. Construct a discrete model**
@@ -395,12 +393,13 @@
     # Towards a trainable model
     **2. Map the coordinates from the pixel space $p\_{ij}$ to the sampling space $x\_{ijk}$**
     - Use SVoRT$^*$ to map all slices into a common space.
-    - Incorporate the point-spread function (PSF) model in $M\_{ij}(x\_{ijk})$. 
+    - Model the point-spread function (PSF) $M\_{ij}(x\_{ijk})$ as an anisotropic 3D Gaussian$^\dagger$. 
     <p align="center">
       <img src="img/nesvor_inr.png" width="55.5%" /><br />
     </p>
 
-    .footnote[$^*$ J. Xu, et al. (2022) "SVoRT: Iterative transformer for slice-to-volume registration in fetal brain MRI." MICCAI.]
+    .footnote[$^*$ J. Xu, et al. (2022) "SVoRT: Iterative transformer for slice-to-volume registration in fetal brain MRI." MICCAI.<br />
+    $^\dagger$ See for instance _M. Kuklisova-Murgasova et al. (2012)._]
     
     ???
     - Data are mapped from a two-dimensional space for each slice to a 3D, unique space.    
@@ -410,7 +409,7 @@
      
     # Towards a trainable model
     
-    **2. Find a way to learn/estimate $\color{red}C\_i$, $\color{blue} M\_{i j}(x)$, $\color{red} B\_i(x)$ and $\cancel{\epsilon\_i(x)}$ $\color{red} \sigma\_i^2(x)$**
+    **3. Find a way to learn/estimate $\color{red}C\_i$, $\color{blue} M\_{i j}(x)$, $\color{red} B\_i(x)$ and $\cancel{\epsilon\_i(x)}$ $\color{red} \sigma\_i^2(x)$**
 
     3 implicit networks
     - For the volume itself: $[V(x), z(x)]=\operatorname{MLP}\_V(\phi(x))$
@@ -427,7 +426,7 @@
     - Bojanowski, Piotr, et al. "Optimizing the latent space of generative networks." arXiv preprint arXiv:1707.05776 (2017).
     ---
      
-    # Towards a trainable model
+    # Putting everything together
     The three ingredients of NeRF: 1. INR &emsp;&emsp; 2.Physical model &emsp;&emsp; **3. Loss**
 
     $$\arg \min\_{\Theta} \mathcal{L}(\Theta), \quad \mathcal{L}=\mathcal{L}\_I+\lambda\_B \mathcal{R}\_B+\lambda\_V \mathcal{R}_V$$
@@ -437,10 +436,16 @@
     - Slice reconstruction: $\mathcal{L}\_I=\frac{1}{|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \mathcal{L}\_{i j}, \;\;  \mathcal{L}\_{i j}=\frac{\left(I\_{i j}-\bar{I}\_{i j}\right)^2}{2 \sigma\_{i j}^2}+\frac{1}{2} \log \left(\sigma\_{i j}^2\right)$
     --
 
-    - Image regularization: $\mathcal{R}\_V=\frac{2}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^{K / 2} r\left(\frac{\left|V\left(x\_{i j k}\right)-V\left(x\_{i j l}\right)\right|}{\left\|x\_{i j k}-x\_{i j l}\right\|\_2}\right)$
+      - Recall that $\bar{I}\_{ij} = \frac{C\_i}{K} \sum\_{k=1}^K B\_i\left(x\_{i j k}\right) V\left(x\_{i j k}\right)$
+      - and $\sigma\_{ij}^2 = \frac{C\_i^2}{K} \sum\_{k=1}^K M\_{i j}\left(x\_{i j k}\right) B\_i^2\left(x\_{i j k}\right) \sigma\_i^2\left(x\_{i j k}\right)$
     --
 
-    - Bias field: $\mathcal{R}\_B=\left(\frac{1}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^K \log B\_i\left(x\_{i j k}\right)\right)^2$
+    - Image regularization: $\mathcal{R}\_V=\frac{2}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^{K / 2} r\left(\frac{\left|V\left(x\_{i j k}\right)-V\left(x\_{i j l}\right)\right|}{\left\|x\_{i j k}-x\_{i j l}\right\|\_2}\right)$
+      - Directional derivative with $l = k+ K/2$
+    --
+
+    - Constraint on the bias field. $\mathcal{R}\_B=\left(\frac{1}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^K \log B\_i\left(x\_{i j k}\right)\right)^2$
+      - Force the log bias to have zero mean
 
     ???
     Point of the bias field constraint: disambiguate as it is only unique up to a given constant $c$. If $(B\_i, V)$ is a solution, then $(cB\_i, \frac{1}{c}V)$ is also feasible $\forall c > 0$. Enforce $\int\_{\Omega} \log B\_i(x) \mathrm{d} x=0$
@@ -468,19 +473,23 @@
 
     - NeSVoR greatly reduces the reconstruction time of fetal brain MRI
     - NeSVoR is very robust to bad quality input.
+    --
+
     - INRs are fascinating
     - INRs are a natural way to frame _many_ biomedical imaging problems. 
     --
 
-      - Undersampled MRI/CT reconstruction$^{1,2}$ &emsp; &emsp; Registration$^3$
-      - Segmentation$^{4,5}$ &emsp; &emsp; Ultrasound imaging $^6$
+      - Undersampled MRI/CT reconstruction$^{1,2,3}$ &emsp; &emsp; Registration$^4$
+      - Segmentation$^{5,6}$ &emsp; &emsp; Ultrasound imaging $^7$
 
-    .footnote[.tiny[- $^1$ L. Shen et al. (2022). NeRP: implicit neural representation learning with prior embedding for sparsely sampled image reconstruction. IEEE TNNLS.
-    - $^2$ A. Corona-Figueroa et al. (2022). "MedNeRF: Medical neural radiance fields for reconstructing 3d-aware ct-projections from a single x-ray." EMBC.
-    - $^3$ J.M. Wolterink et al. (2022). "Implicit neural representations for deformable image registration." MIDL.
-    - $^4$ S. Vora et al. "NeDF: Neural semantic fields for generalizable semantic segmentation of 3D scenes." arXiv:2111.13260.
-    - $^5$ H. Zhang et al. (2021). "NeRD: Neural representation of distribution for medical image segmentation." arXiv:2103.04020.
-    - $^6$ M. Wysocki et al. (2023)- "Ultra-NeRF: Neural Radiance Fields for Ultrasound Imaging." arXiv:2301.10520.
+    .footnote[.tiny[
+    $^1$ Y. Sun et al. (2021). CoIL: Coordinate-based Internal Learning for Imaging Inverse Problems. arXiv:2102.05181<br />
+    $^2$ L. Shen et al. (2022). NeRP: implicit neural representation learning with prior embedding for sparsely sampled image reconstruction. IEEE TNNLS.<br />
+    $^3$ A. Corona-Figueroa et al. (2022). "MedNeRF: Medical neural radiance fields for reconstructing 3d-aware ct-projections from a single x-ray." EMBC.<br />
+    $^4$ J.M. Wolterink et al. (2022). "Implicit neural representations for deformable image registration." MIDL.<br />
+    $^5$ S. Vora et al. "NeDF: Neural semantic fields for generalizable semantic segmentation of 3D scenes." arXiv:2111.13260.<br />
+    $^6$ H. Zhang et al. (2021). "NeRD: Neural representation of distribution for medical image segmentation." arXiv:2103.04020.<br />
+    $^7$ M. Wysocki et al. (2023)- "Ultra-NeRF: Neural Radiance Fields for Ultrasound Imaging." arXiv:2301.10520.<br />
     ]]
     --
 
