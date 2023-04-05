@@ -89,9 +89,9 @@
 
     # An introduction to<br /> implicit neural representations
     with a focus on NeSVoR<br /><br />
+    [t-sanchez.github.io/slides/nesvor](https://t-sanchez.github.io/slides/nesvor/)<br /><br />
 
-    .smallish[DL Journal Club<br /><br />
-    
+    .smallish[DL Journal Club<br />
     
     Thomas Sanchez<br />
     UNIL - CHUV - CIBM ]
@@ -137,10 +137,11 @@
     **1. $\text{NeRF} \subset \text{implicit neural models} \approx \text{coordinate-based models} $.**
     $$f_{\theta}:(x,y,z)\rightarrow (v,\sigma)\;\;\; x,y,z,v, \sigma \in\mathbb{R}$$
 
+    $f\_{\theta}$ is typically a multi-layered perceptron (MLP).
     <p align="center" style="position: absolute; bottom: 2em; margin-left: -150px;">
     <img src="img/inr_full.png" width="70%" /><br />
     </p>
-    .footnote[Mildenhall et al. (2020)]
+    .footnote[Mildenhall et al. (2020). NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. *ECCV*]
 
     ???
     - INR: 
@@ -253,7 +254,7 @@
       - Fast spin echo (FSE) sequences: 20-30 s <br />
       .smallish[⇒ 1 slice in 1 s]
       - Thick slices  <br /> .smallish[resolution around $1\times 1 \times 3\text{mm}^3$]
-    - Orthogonal series ($\geq 3$) of 2D thick <br /> slices ($3-5 \text{mm}$)
+    - Orthogonal series ($\geq 3$) of slices
     - Breath hold
     
     <p align="center">
@@ -294,7 +295,7 @@
 
     ---
     # Super-resolution reconstruction
-    Multiple motion corrupted acquisition $\to$ Single isotropic reconstructed volume
+    Multiple motion corrupted acquisitions $\to$ Single isotropic reconstructed volume
 
     <p align="center">
       <img src="img/srr.png" width="100%" />
@@ -379,7 +380,7 @@
 
     $$\bar{I}\_{ij} = \mathbb{E}\left[I\_{i j}\right]\approx\frac{C\_i}{K} \sum\_{k=1}^K B\_i\left(x\_{i j k}\right) V\left(x\_{i j k}\right)$$
 
-    $$\sigma\_{ij}^2 = \operatorname{var}\left(I\_{i j}\right) \approx\frac{C\_i^2}{K} \sum\_{k=1}^K M\_{i j}\left(x\_{i j k}\right) B\_i^2\left(x\_{i j k}\right) \sigma\_i^2\left(x\_{i j k}\right)$$
+    $$\sigma\_{ij}^2 = \operatorname{var}\left(I\_{i j}\right) \approx\frac{C\_i^2}{K} \sum\_{k=1}^K M^2\_{i j}\left(x\_{i j k}\right) B\_i^2\left(x\_{i j k}\right) \sigma\_i^2\left(x\_{i j k}\right)$$
     
     
     ???
@@ -412,9 +413,9 @@
     **3. Find a way to learn/estimate $\color{red}C\_i$, $\color{blue} M\_{i j}(x)$, $\color{red} B\_i(x)$ and $\cancel{\epsilon\_i(x)}$ $\color{red} \sigma\_i^2(x)$**
 
     3 implicit networks
-    - For the volume itself: $[V(x), z(x)]=\operatorname{MLP}\_V(\phi(x))$
-    - For the bias field: $B\_i(x)=\operatorname{MLP}\_B\left(\phi\_{1: b}(x), e\_i\right)$
-    - For the variance: $\sigma\_i^2(x)=\operatorname{MLP}\_\sigma\left(z(x), e\_i\right)$
+    - For the volume itself: $[\textcolor{olive}{V(x)}, z(x)]=\operatorname{MLP}\_V(\phi(x))$
+    - For the bias field: $\textcolor{olive}{B\_i(x)}=\operatorname{MLP}\_B\left(\phi\_{1: b}(x), e\_i\right)$
+    - For the variance: $\textcolor{olive}{\sigma\_i^2(x)}=\operatorname{MLP}\_\sigma\left(z(x), e\_i\right)$
 
 
     <p align="center">
@@ -433,19 +434,20 @@
     
     --
 
-    - Slice reconstruction: $\mathcal{L}\_I=\frac{1}{|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \mathcal{L}\_{i j}, \;\;  \mathcal{L}\_{i j}=\frac{\left(I\_{i j}-\bar{I}\_{i j}\right)^2}{2 \sigma\_{i j}^2}+\frac{1}{2} \log \left(\sigma\_{i j}^2\right)$
+    - Slice reconstruction: $\mathcal{L}\_I=\frac{1}{|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \mathcal{L}\_{i j}, \;\;  \mathcal{L}\_{i j}=\frac{\left(I\_{i j}-\textcolor{olive}{\bar{I}\_{i j}}\right)^2}{2 \textcolor{olive}{\sigma\_{i j}^2}}+\frac{1}{2} \log \left(\textcolor{olive}{\sigma\_{i j}^2}\right)$
     --
 
-      - Recall that $\bar{I}\_{ij} = \frac{C\_i}{K} \sum\_{k=1}^K B\_i\left(x\_{i j k}\right) V\left(x\_{i j k}\right)$
-      - and $\sigma\_{ij}^2 = \frac{C\_i^2}{K} \sum\_{k=1}^K M\_{i j}\left(x\_{i j k}\right) B\_i^2\left(x\_{i j k}\right) \sigma\_i^2\left(x\_{i j k}\right)$
+      .smallish[
+    - Recall that $\bar{I}\_{ij} = \frac{C\_i}{K} \sum\_{k=1}^K \textcolor{olive}{B\_i\left(x\_{i j k}\right)} \textcolor{olive}{V\left(x\_{i j k}\right)}$ <br />
+    - and $\sigma\_{ij}^2 = \frac{C\_i^2}{K} \sum\_{k=1}^K M\_{i j}\left(x\_{i j k}\right) \textcolor{olive}{B\_i^2\left(x\_{i j k}\right)}\textcolor{olive}{\sigma\_i^2\left(x\_{i j k}\right)}$]
     --
 
-    - Image regularization: $\mathcal{R}\_V=\frac{2}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^{K / 2} r\left(\frac{\left|V\left(x\_{i j k}\right)-V\left(x\_{i j l}\right)\right|}{\left\|x\_{i j k}-x\_{i j l}\right\|\_2}\right)$
-      - Directional derivative with $l = k+ K/2$
+    - Constraint on the bias field. $\mathcal{R}\_B=\left(\frac{1}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^K \log \textcolor{olive}{B\_i\left(x\_{i j k}\right)}\right)^2$ <br />
+    .smallish[Force the log bias to have zero mean]
     --
 
-    - Constraint on the bias field. $\mathcal{R}\_B=\left(\frac{1}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^K \log B\_i\left(x\_{i j k}\right)\right)^2$
-      - Force the log bias to have zero mean
+    - Image regularization: $\mathcal{R}\_V=\frac{2}{K|\mathcal{B}|} \sum\_{(i, j) \in \mathcal{B}} \sum\_{k=1}^{K / 2} r\left(\frac{\left|\textcolor{olive}{V\left(x\_{i j k}\right)}-\textcolor{olive}{V\left(x\_{i j l}\right)}\right|}{\left\|x\_{i j k}-x\_{i j l}\right\|\_2}\right)$ <br />
+    .smallish[Directional derivative with $l = k+ K/2$]
 
     ???
     Point of the bias field constraint: disambiguate as it is only unique up to a given constant $c$. If $(B\_i, V)$ is a solution, then $(cB\_i, \frac{1}{c}V)$ is also feasible $\forall c > 0$. Enforce $\int\_{\Omega} \log B\_i(x) \mathrm{d} x=0$
@@ -481,6 +483,7 @@
 
       - Undersampled MRI/CT reconstruction$^{1,2,3}$ &emsp; &emsp; Registration$^4$
       - Segmentation$^{5,6}$ &emsp; &emsp; Ultrasound imaging $^7$
+    - Huge application in computer vision and graphics.$^8$
 
     .footnote[.tiny[
     $^1$ Y. Sun et al. (2021). CoIL: Coordinate-based Internal Learning for Imaging Inverse Problems. arXiv:2102.05181<br />
@@ -489,12 +492,11 @@
     $^4$ J.M. Wolterink et al. (2022). "Implicit neural representations for deformable image registration." MIDL.<br />
     $^5$ S. Vora et al. "NeDF: Neural semantic fields for generalizable semantic segmentation of 3D scenes." arXiv:2111.13260.<br />
     $^6$ H. Zhang et al. (2021). "NeRD: Neural representation of distribution for medical image segmentation." arXiv:2103.04020.<br />
-    $^7$ M. Wysocki et al. (2023)- "Ultra-NeRF: Neural Radiance Fields for Ultrasound Imaging." arXiv:2301.10520.<br />
+    $^7$ M. Wysocki et al. (2023). "Ultra-NeRF: Neural Radiance Fields for Ultrasound Imaging." arXiv:2301.10520.<br />
+    $^8$ [A. Tagliasacchi. (2022). "Neural Fields Beyond Novel View Synthesis." TUM AI Lecture Series](https://www.youtube.com/watch?v=nRCOsBHt97E)
     ]]
-    --
 
-    - Huge application in computer vision and graphics
-
+    
     ---
     count: false
     class: center, middle
@@ -521,7 +523,7 @@
     - J.M. Wolterink et al. (2022). "Implicit neural representations for deformable image registration." MIDL.
     - S. Vora, et al. "NeDF: Neural semantic fields for generalizable semantic segmentation of 3D scenes." arXiv:2111.13260.
     - H. Zhang et al. (2021). "NeRD: Neural representation of distribution for medical image segmentation." arXiv:2103.04020.
-    - M. Wysocki et al. (2023)- "Ultra-NeRF: Neural Radiance Fields for Ultrasound Imaging." arXiv:2301.10520.
+    - M. Wysocki et al. (2023). "Ultra-NeRF: Neural Radiance Fields for Ultrasound Imaging." arXiv:2301.10520.
     ]
     ---
     count: false
