@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Flywheel</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="../css/quasar.min.css" />
+  <link rel="stylesheet" type="text/css" href="../css/pure-min.css" />
+  <link rel="stylesheet" type="text/css" href="../css/spaces.css" />
+  <link rel="stylesheet" type="text/css" href="../css/typo.css" />
+  <link rel="stylesheet" type="text/css" href="../css/devices.min.css" />
+  <link rel="stylesheet" type="text/css" href="../css/gh-fork-ribbon.css" />
+  <link rel="stylesheet" type="text/css" href="../css/nord-dark.css" />
+  <link rel="stylesheet" type="text/css" href="../css/nord-light.css" />
+  <link rel="stylesheet" type="text/css" href="../css/font-nord.css" />
+  <link rel="stylesheet" type="text/css" href="../css/bg-nord.css" />
+  <link rel="stylesheet" type="text/css" href="../css/font-open-color.css" />
+  <link rel="stylesheet" type="text/css" href="../css/bg-open-color.css" />
+  <link rel="stylesheet" type="text/css" href="../css/material-icons.css" />
+  <link rel="stylesheet" type="text/css" href="../css/abs-layout.css" />
+  <link rel="stylesheet" type="text/css" href="../css/border-layout.css" />
+  <link rel="stylesheet" type="text/css" href="../css/text-rect.css" />
+  <link rel="stylesheet" type="text/css" href="../css/text-circle.css" />
+  <link rel="stylesheet" type="text/css" href="../css/card.css" />
+  <link rel="stylesheet" type="text/css" href="../css/lines.css" />
+  <link rel="stylesheet" type="text/css" href="../css/filters.css" />
+  <link rel="stylesheet" type="text/css" href="../fonts/remixicon.css" />
+  <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<style>
+  .small {
+    font-size: 9pt;
+  }
+
+  .smallish {
+    font-size: 12pt;
+  }
+
+  .tiny {
+    font-size: 7pt;
+  }
+
+  .larger {
+    font-size: 20pt;
+  }
+
+  .large {
+    font-size: 24pt;
+  }
+
+  .footnote {
+    position: absolute;
+    bottom: 3em;
+    font-size: 0.7em;
+  }
+
+  .split-70 .column:first-of-type {
+    width: 70%;
+    float: left
+  }
+
+  .split-70 .column:last-of-type {
+    width: 30%;
+    float: right
+  }
+
+  .split-15 .column:first-of-type {
+    width: 15%;
+    float: left
+  }
+
+  .split-15 .column:last-of-type {
+    width: 85%;
+    float: right
+  }
+</style>
+
+<body>
+  <textarea id="source">
+
+    layout: true
+    class: typo, typo-selection
+
+    ---
+
+    count: true
+    class: center, middle
+
+    # Flywheel
+    [jaimebarran.github.io/slides/mial_flywheel_20240312](https://jaimebarran.github.io/slides/mial_flywheel_20240312)<br /><br />
+
+    .smallish[MIAL group meeting<br />
+    
+    Jaime Barranco<br />
+    UNIL - CHUV - CIBM ]
+
+    ---
+
+    # Structure
+    .column-2[
+    - organization
+      - login
+          - SWITCH
+      - group
+      - roles
+          - permissions
+      - hpc
+    - deid profile
+    - upload dicom
+    - upload nifti
+    - run gears
+    - jobs logs
+    - gear rules
+    - segmentations
+    - annotations
+    - gear building
+      - manifest
+      - run
+      - dockerfile
+      - flywheel test
+    - upload gear
+    ]
+
+    ---
+
+    # Gear Building
+    - [flywheel-cli](https://docs.flywheel.io/CLI_Command_Guides/cmd_installing_the_flywheel_command_line_interface_cli/)
+    - [developer guides](https://docs.flywheel.io/Developer_Guides/)
+      - manifest
+      - run
+      - dockerfile
+    - examples
+      - gear_tutorial: print (input msg.txt)
+      - gear_tutorial_test: managing files (nifti)
+      - fw_gear_aeye_interactive: interactive docker image to see what's inside
+      - fw_gear_aeye: nnunet segmentation
+
+    ---
+
+    # Survey
+
+  </textarea>
+
+
+  <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+  <script type="text/javascript">
+    var slideshow = remark.create({
+      highlightStyle: 'monokai',
+      highlightLanguage: 'remark',
+      highlightLines: true,
+      countIncrementalSlides: false,
+      highlightSpans: true,
+      ratio: '16:9'
+    });
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+</body>
+
+</html>
